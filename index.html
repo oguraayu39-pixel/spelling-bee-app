@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Spelling Bee App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1>🐝 Spelling Bee Trainer</h1>
+
+   <div id="admin-section" style="display: none;"> <button onclick="syncAllData()">Update Database from Google Sheets</button>
+    </div>
+
+    <hr>
+
+    <div id="bee-selection">
+        <input type="checkbox" id="oneBeeCheck" checked> <label>One Bee</label>
+        <input type="checkbox" id="twoBeeCheck"> <label>Two Bee</label>
+        <button onclick="syncAllData()">Sync All Word Lists</button>
+    </div>
+
+    <hr>
+
+    <div id="quiz-section">
+        <h3>Quiz Time!</h3>
+        <div id="filter-section">
+            <label>Quiz Range:</label>
+            <input type="text" id="startLetter" placeholder="a" maxlength="1" style="width: 30px;">
+            <span> to </span>
+            <input type="text" id="endLetter" placeholder="z" maxlength="1" style="width: 30px;">
+            <br>
+            <input type="checkbox" id="practiceOnlyCheckbox"> 
+            <label for="practiceOnlyCheckbox">Quiz only from "Practice More" list</label>
+        </div>
+        <button onclick="startQuiz()">Start</button>
+        <p id="timer">Time left: 15s</p>
+        <div id="quiz-controls" style="display:none;">
+            <input type="text" id="answerInput" placeholder="Spell it!" onkeydown="handleEnter(event)">
+            <button onclick="checkAnswer()">Submit</button>
+            <button onclick="markForPractice()">⭐ Practice This More</button>
+            <button id="nextButton" onclick="startQuiz()" style="display:none;">Next Word →</button>
+        </div>
+        <p id="feedback"></p>
+    </div>
+
+    <hr>
+    <div id="stats-section">
+        <h3>📊 Word Statistics</h3>
+        <button onclick="updateStatsTable()">Refresh Stats</button>
+        <table id="statsTable" border="1" style="width:100%; margin-top:10px; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #f2f2f2;">
+                    <th>Word</th>
+                    <th>Correct</th>
+                    <th>Incorrect</th>
+                    <th>Practice List?</th>
+                </tr>
+            </thead>
+            <tbody id="statsBody">
+                </tbody>
+        </table>
+    </div>
+
+    <thead>
+        <tr style="background-color: #f2f2f2;">
+            <th>Word</th>
+            <th>Category</th> <th>Correct</th>
+            <th>Incorrect</th>
+            <th>Practice List?</th>
+        </tr>
+    </thead>
+
+    <script src="script.js"></script>
+</body>
+</html>
