@@ -204,7 +204,7 @@ function checkAnswer(){
     updateStatsTable();
     document.getElementById('answerInput').value = ""; // Clears the box for the next word
     document.getElementById('nextButton').style.display = "inline-block";
-    document.getElementById('answerInput').disabled = true;
+    document.getElementById('answerInput').readOnly = true;
     isWaitingForNext = true; 
     document.getElementById('nextButton').focus(); // Move the "focus" to the next button
 }
@@ -218,7 +218,8 @@ function revealCorrectSpelling(){
     wordDatabase[currentWordIndex].incorrectCount++;
     document.getElementById('nextButton').style.display = "inline-block";
     isWaitingForNext = true; 
-    document.getElementById('nextButton').focus(); // Move the "focus" to the next button
+    document.getElementById('nextButton').focus();
+    document.getElementById('answerInput').readOnly = true;
 }
 
 function markForPractice() {
