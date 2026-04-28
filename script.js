@@ -265,5 +265,14 @@ function toggleStats() {
     }
 }
 
+function listenAgain() {
+    if (currentWordIndex !== null) {
+        let wordToSpell = wordDatabase[currentWordIndex].text;
+        let utterance = new SpeechSynthesisUtterance(wordToSpell);
+        window.speechSynthesis.speak(utterance);
+    }
+}
+    
+
 updateStatsTable();
     
