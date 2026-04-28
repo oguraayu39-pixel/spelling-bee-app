@@ -3,6 +3,11 @@ let timerInterval = null;
 let timeLeft = 15;
 let wordDatabase = JSON.parse(localStorage.getItem('myWords')) || [];
 let isWaitingForNext = false;
+let currentScore = 0;
+let bestScore = localStorage.getItem('bestScore') || 0;
+
+document.getElementById('bestScoreDisplay').innerText = bestScore;
+
 const ONE_BEE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9oD_VDTfsKrdcbde04-GR6meNneDIr2P61j9cC2AGDV_TL_kN8ARNYCx3LbwJUQwD5FmydjWMgMTI/pub?gid=0&single=true&output=csv";
 const TWO_BEE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9oD_VDTfsKrdcbde04-GR6meNneDIr2P61j9cC2AGDV_TL_kN8ARNYCx3LbwJUQwD5FmydjWMgMTI/pub?gid=1465023831&single=true&output=csv";
 
@@ -179,6 +184,14 @@ function checkAnswer(){
 
     if(userAnswer === correctAnswer){
         let pointsEarned = 10 + timeLeft;
+        currentScore += pointsEarned;
+        if(currentScore > bestScore){
+            bestScore = currentScore;
+            localStorage.setItem('bestScore', bestScore);
+        }
+        document.getElementById('scoreDisplay').innerText = currentScore;
+        document.getElementById('bestScoreDisplay').innerText = bestScore;
+        
         feedbackElement.innerText = "Correct! You earned " + pointsEarned + " points.";
         feedbackElement.style.color = "green";
 
@@ -272,7 +285,12 @@ function listenAgain() {
         window.speechSynthesis.speak(utterance);
     }
 }
-    
+
+function resetGame(){
+    currentScore = 0
+    document.getElementById('scoreDisplay').innerText = "0";
+    startQuiz();
+}
 
 updateStatsTable();
     
