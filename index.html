@@ -45,6 +45,11 @@
     </div>
 
     <hr>
+    <button onclick="toggleStats()">📊 Show Word Statistics</button>
+
+    <div id="stats-wrapper" style="display: none; margin-top: 20px;">
+        <table id="statsTable">...</table>
+    </div>
     <div id="stats-section">
         <h3>📊 Word Statistics</h3>
         <button onclick="updateStatsTable()">Refresh Stats</button>
