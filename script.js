@@ -257,14 +257,16 @@ function updateStatsTable() {
 function handleEnter(event) {
     if (event.key === "Enter") {
         event.preventDefault(); 
-
         console.log("Enter pressed. isWaitingForNext is:", isWaitingForNext);
-
         if (isWaitingForNext === true) {
             startQuiz();
         } else {
             checkAnswer();
         }
+    }
+    if (event.code === "Space") {
+        event.preventDefault(); // Prevents a space character from appearing in the box
+        listenAgain();
     }
 }
 
@@ -280,6 +282,7 @@ function toggleStats() {
 
 function listenAgain() {
     if (currentWordIndex !== null) {
+        window.speechSynthesis.cancel();
         let wordToSpell = wordDatabase[currentWordIndex].text;
         let utterance = new SpeechSynthesisUtterance(wordToSpell);
         window.speechSynthesis.speak(utterance);
