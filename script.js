@@ -100,29 +100,24 @@ function startQuiz(){
     let end = document.getElementById('endLetter').value.toLowerCase() || 'z';
     let practiceOnly = document.getElementById('practiceOnlyCheckbox').checked;
 
-    let showOneBee = document.getElementById('oneBeeCheck').checked;
-    let showTwoBee = document.getElementById('twoBeeCheck').checked;
+    const showOneBee = document.getElementById('oneBeeCheck').checked;
+    const showTwoBee = document.getElementById('twoBeeCheck').checked;
 
     // 2. Create a "Filtered List" based on the range
    let filteredWords = wordDatabase.filter(item => {
-        // 1. Check if the word matches a checked category
-        let categoryMatch = false;
-        if (showOneBee && item.category === "One Bee") categoryMatch = true;
-        if (showTwoBee && item.category === "Two Bee") categoryMatch = true;
+        const categoryMatch = (showOneBee && item.category === "One Bee") || 
+                              (showTwoBee && item.category === "Two Bee");
+        
+        const start = document.getElementById('startLetter').value.toLowerCase() || 'a';
+        const end = document.getElementById('endLetter').value.toLowerCase() || 'z';
+        const firstLetter = item.text[0];
+        const inRange = firstLetter >= start && firstLetter <= end;
 
-        // 2. Check the A-Z range
-        let start = document.getElementById('startLetter').value.toLowerCase() || 'a';
-        let end = document.getElementById('endLetter').value.toLowerCase() || 'z';
-        let firstLetter = item.text[0];
-        let inRange = firstLetter >= start && firstLetter <= end;
-
-        // 3. Final Decision
         return categoryMatch && inRange;
     });
 
-    // 3. Check if the filtered list is empty
     if (filteredWords.length === 0) {
-        alert("No words found in the range '" + start + "' to '" + end + "'.");
+        alert("No words found for the selected categories/range!");
         return;
     }
 
