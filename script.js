@@ -255,5 +255,15 @@ function handleEnter(event) {
     }
 }
 
+function toggleStats() {
+    const wrapper = document.getElementById('stats-wrapper');
+    if (wrapper.style.display === "none") {
+        wrapper.style.display = "block";
+        updateStatsTable(); // Refresh data when opening
+    } else {
+        wrapper.style.display = "none";
+    }
+}
+
 updateStatsTable();
     
