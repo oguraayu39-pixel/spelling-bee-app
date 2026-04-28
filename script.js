@@ -5,6 +5,10 @@ let wordDatabase = JSON.parse(localStorage.getItem('myWords')) || [];
 let isWaitingForNext = false;
 const ONE_BEE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9oD_VDTfsKrdcbde04-GR6meNneDIr2P61j9cC2AGDV_TL_kN8ARNYCx3LbwJUQwD5FmydjWMgMTI/pub?gid=0&single=true&output=csv";
 const TWO_BEE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9oD_VDTfsKrdcbde04-GR6meNneDIr2P61j9cC2AGDV_TL_kN8ARNYCx3LbwJUQwD5FmydjWMgMTI/pub?gid=1465023831&single=true&output=csv";
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('admin') === 'true') {
+    document.getElementById('admin-section').style.display = 'block';
+}
 
 async function syncAllData() {
     wordDatabase = []; // Start fresh
