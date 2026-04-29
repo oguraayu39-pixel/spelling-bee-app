@@ -267,7 +267,7 @@ function handleEnter(event) {
             checkAnswer();
         }
     }
-    if (event.code === "Space") {
+    if (event.code === "Tab") {
         event.preventDefault(); // Prevents a space character from appearing in the box
         listenAgain();
         document.getElementById('answerInput').focus();
