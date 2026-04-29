@@ -130,9 +130,20 @@ function startQuiz(){
         if (word.correctCount === 0 && word.incorrectCount ===0){
             priorityPool.push(word, word);
         }else if(word.correctCount < word.incorrectCount){
-            priority
+            priorityPool.push(word, word, word);
+        }else{
+            priorityPool.push(word);
         }
+    });
+
+    if(priorityPool.length === 0){
+        alert("No words found.");
+        return;
     }
+
+    let randomIndex = Math.floor(Math.random() * priorityPool.length);
+    let selectedWordObject = priorityPool[randomIndex];
+    currentWordIndex = wordDatabase.findIndex(w => w.text === selectedWordObject.text);
 
     if (filteredWords.length === 0) {
         alert("No words found for the selected categories/range!");
