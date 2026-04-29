@@ -214,9 +214,12 @@ function checkAnswer(){
         }
         document.getElementById('scoreDisplay').innerText = currentScore;
         document.getElementById('bestScoreDisplay').innerText = bestScore;
-        
-        feedbackElement.innerText = "Correct! You earned " + pointsEarned + " points.";
-        feedbackElement.style.color = "green";
+
+        feedbackElement.innerHTML = `
+            <span style="color: green;">Correct!</span><br>
+            You typed: <strong>${userAnswer}</strong><br>
+            <strong>${pointsEarned} points earned.</strong>
+        `;
 
         wordDatabase[currentWordIndex].correctCount++;
     }else{
@@ -234,10 +237,15 @@ function checkAnswer(){
 }
 
 function revealCorrectSpelling(){
+    let userAnswer = document.getElementById('answerInput').value.trim();
     let correctAnswer = wordDatabase[currentWordIndex].text;
     let feedback = document.getElementById('feedback');
-    feedback.innerText = "Incorrect. The correct spelling is: " + correctAnswer.toUpperCase();
-    feedback.style.color = "red";
+    
+    feedback.innerHTML = `
+        <span style="color: red;">Incorrect.</span><br>
+        You typed: <strong>${userAnswer || "(nothing)"}</strong><br>
+        Correct: <strong>${correctAnswer.toUpperCase()}</strong>
+    `;
 
     wordDatabase[currentWordIndex].incorrectCount++;
     document.getElementById('nextButton').style.display = "inline-block";
