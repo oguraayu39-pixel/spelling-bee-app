@@ -243,7 +243,7 @@ function revealCorrectSpelling(){
     
     feedback.innerHTML = `
         <span style="color: red;">Incorrect.</span><br>
-        You typed: <strong>${userAnswer || "(nothing)"}</strong><br>
+        You typed: <strong>${userAnswer || " "}</strong><br>
         Correct: <strong>${correctAnswer.toUpperCase()}</strong>
     `;
 
