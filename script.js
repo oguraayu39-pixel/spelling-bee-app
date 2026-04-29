@@ -329,15 +329,24 @@ function resetGame(){
 
 function loadVoices() {
     allVoices = window.speechSynthesis.getVoices();
-    const select = document.getElementById('voiceSelect');
+    const voiceSelect = document.getElementById('voiceSelect');
     if (!voiceSelect) return;
+
     const currentSelected = voiceSelect.value;
     voiceSelect.innerHTML = '<option value="">Default System Voice</option>';
 
-    allVoices.forEach((voice, index) => {
+    const trustedCreators = ['Google', 'Apple', 'Microsoft'];
+
+    const filteredVoices = allVoices.filter(voice => {
+        const isTrusted = trustedCreators.some(creator => voice.name.includes(creator));
+        return isTrusted;
+    });
+
+    filteredVoices.forEach((voice) => {
+        const originalIndex = allVoices.indexOf(voice);
         const option = document.createElement('option');
-        option.value = index;
-        option.textContent = `${voice.name} (${voice.lang})`;
+        option.value = originalIndex;
+        option.textContent = `${voice.name}`; // Simplified name is easier to read
         voiceSelect.appendChild(option);
     });
     
