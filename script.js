@@ -97,6 +97,7 @@ function saveWord() {
 function startQuiz() {
     isWaitingForNext = false;
     document.getElementById('nextButton').style.display = "none";
+    document.getElementById('submitButton').style.display = "inline-block";
 
     const inputField = document.getElementById('answerInput');
     inputField.disabled = false; 
@@ -196,6 +197,8 @@ function startTimer() {
 }
 
 function checkAnswer(){
+    if(isWaitingForNext) return;
+    
     clearInterval(timerInterval);
 
     let userAnswer = document.getElementById('answerInput').value.trim().toLowerCase();
@@ -224,9 +227,10 @@ function checkAnswer(){
     updateStatsTable();
     document.getElementById('answerInput').value = ""; // Clears the box for the next word
     document.getElementById('nextButton').style.display = "inline-block";
+    document.getElementById('submitButton').style.display = "none";
     document.getElementById('answerInput').readOnly = true;
     isWaitingForNext = true; 
-    document.getElementById('nextButton').focus(); // Move the "focus" to the next button
+    document.getElementById('nextButton').focus(); 
 }
 
 function revealCorrectSpelling(){
@@ -237,6 +241,7 @@ function revealCorrectSpelling(){
 
     wordDatabase[currentWordIndex].incorrectCount++;
     document.getElementById('nextButton').style.display = "inline-block";
+    document.getElementById('submitButton').style.display = "none";
     isWaitingForNext = true; 
     document.getElementById('nextButton').focus();
     document.getElementById('answerInput').readOnly = true;
