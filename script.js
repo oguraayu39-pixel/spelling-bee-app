@@ -268,6 +268,7 @@ function handleEnter(event) {
     if (event.code === "Space") {
         event.preventDefault(); // Prevents a space character from appearing in the box
         listenAgain();
+        document.getElementById('answerInput').focus();
     }
 }
 
@@ -288,7 +289,6 @@ function listenAgain() {
         let utterance = new SpeechSynthesisUtterance(wordToSpell);
         window.speechSynthesis.speak(utterance);
     }
-    document.getElementById('answerInput').focus();
 }
 
 function resetGame(){
