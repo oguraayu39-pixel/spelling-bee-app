@@ -216,9 +216,9 @@ function checkAnswer(){
         document.getElementById('bestScoreDisplay').innerText = bestScore;
 
         feedbackElement.innerHTML = `
-            <span style="color: green;">Correct!</span><br>
+            <span style="color: green;">Correct! ${pointsEarned} points earned. </span><br>
             You typed: <strong>${userAnswer}</strong><br>
-            <strong>${pointsEarned} points earned.</strong>
+            
         `;
 
         wordDatabase[currentWordIndex].correctCount++;
