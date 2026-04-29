@@ -63,6 +63,14 @@
     <div id="stats-wrapper" style="display: none; margin-top: 20px;">
         <h3>📊 Word Statistics</h3>
         <button onclick="updateStatsTable()">Refresh Stats</button>
+        <div class="sort-controls" style="margin-bottom: 10px;">
+            <label>Sort by: </label>
+            <select id="sortSelect" onchange="updateStatsTable()">
+                <option value="alpha">A-Z (Alphabetical)</option>
+                <option value="best">Best Mastered (Most Correct)</option>
+                <option value="worst">Needs Help (Most Incorrect)</option>
+            </select>
+        </div>
         <table id="statsTable" border="1" style="width:100%; margin-top:10px; border-collapse: collapse;">
             <thead>
                 <tr style="background-color: #f2f2f2;">
