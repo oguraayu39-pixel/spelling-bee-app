@@ -92,111 +92,89 @@ function saveWord() {
     }
 }
 
-function startQuiz(){
+function startQuiz() {
     isWaitingForNext = false;
     document.getElementById('nextButton').style.display = "none";
 
     const inputField = document.getElementById('answerInput');
-    inputField.disabled = false; // Just in case
-    inputField.readOnly = false; // This is the important one!
+    inputField.disabled = false; 
+    inputField.readOnly = false; 
     inputField.value = "";
     inputField.focus();
 
     window.speechSynthesis.cancel();
 
-    // 1. Get the range from the UI
-    let start = document.getElementById('startLetter').value.toLowerCase() || 'a';
-    let end = document.getElementById('endLetter').value.toLowerCase() || 'z';
-    let practiceOnly = document.getElementById('practiceOnlyCheckbox').checked;
-
+    // 1. Get Filters
     const showOneBee = document.getElementById('oneBeeCheck').checked;
     const showTwoBee = document.getElementById('twoBeeCheck').checked;
+    const practiceOnly = document.getElementById('practiceOnlyCheckbox').checked;
+    const start = document.getElementById('startLetter').value.toLowerCase() || 'a';
+    const end = document.getElementById('endLetter').value.toLowerCase() || 'z';
 
-    // 2. Create a "Filtered List" based on the range
-   let filteredWords = wordDatabase.filter(item => {
+    // 2. Filter the Master Database
+    let filteredWords = wordDatabase.filter(item => {
         const categoryMatch = (showOneBee && item.category === "One Bee") || 
                               (showTwoBee && item.category === "Two Bee");
-        
-        const start = document.getElementById('startLetter').value.toLowerCase() || 'a';
-        const end = document.getElementById('endLetter').value.toLowerCase() || 'z';
         const firstLetter = item.text[0];
         const inRange = firstLetter >= start && firstLetter <= end;
+        const practiceMatch = practiceOnly ? item.needsPractice : true;
 
-        return categoryMatch && inRange;
+        return categoryMatch && inRange && practiceMatch;
     });
 
+    if (filteredWords.length === 0) {
+        alert("No words found for the selected settings!");
+        return;
+    }
+
+    // 3. Create the Smart Priority Pool
     let priorityPool = [];
     filteredWords.forEach(word => {
-        if (word.correctCount === 0 && word.incorrectCount ===0){
-            priorityPool.push(word, word);
-        }else if(word.correctCount < word.incorrectCount){
-            priorityPool.push(word, word, word);
-        }else{
-            priorityPool.push(word);
+        if (word.correctCount === 0 && word.incorrectCount === 0) {
+            priorityPool.push(word, word); // New words: double chance
+        } else if (word.incorrectCount > word.correctCount) {
+            priorityPool.push(word, word, word); // Struggled words: triple chance
+        } else {
+            priorityPool.push(word); // Mastered: single chance
         }
     });
 
-    if(priorityPool.length === 0){
-        alert("No words found.");
-        return;
-    }
-
+    // 4. Pick the Word
     let randomIndex = Math.floor(Math.random() * priorityPool.length);
     let selectedWordObject = priorityPool[randomIndex];
     currentWordIndex = wordDatabase.findIndex(w => w.text === selectedWordObject.text);
-
-    if (filteredWords.length === 0) {
-        alert("No words found for the selected categories/range!");
-        return;
-    }
-
-    if (practiceOnly) { 
-        filteredWords = filteredWords.filter(w => w.needsPractice); 
-    }
-
-    // 4. Timer cleanup
-    if (timerInterval) {
-        console.log("Stopping the old timer...");
-        clearInterval(timerInterval);
-        timerInterval = null;
-    }
-
-    // 5. Pick from the FILTERED list, not the whole database
-    let randomIndex = Math.floor(Math.random() * filteredWords.length);
-    let selectedWordObject = filteredWords[randomIndex];
-    
-    // We need to find the REAL index in the original database to update stats later
-    currentWordIndex = wordDatabase.findIndex(w => w.text === selectedWordObject.text);
     
     let wordToSpell = wordDatabase[currentWordIndex].text;
+
+    // 5. UI Setup
     document.getElementById('quiz-controls').style.display = 'block';
     document.getElementById('feedback').innerText = "";
-    document.getElementById('answerInput').value = "";
-    document.getElementById('answerInput').focus();
-
+    
+    // 6. Timer and Speech
+    if (timerInterval) clearInterval(timerInterval);
+    
     let utterance = new SpeechSynthesisUtterance(wordToSpell);
     window.speechSynthesis.speak(utterance);
     
     startTimer();
-    document.getElementById('answerInput').focus();
 }
 
-function startTimer(){
-    timeLeft = parseInt(document.getElementById('timerSetting').value) || 10;
+function startTimer() {
+    // Grabs the number from your HTML input, default to 10
+    const userTime = document.getElementById('timerSetting');
+    timeLeft = userTime ? parseInt(userTime.value) : 10;
+    
     document.getElementById('timer').innerText = "Time left: " + timeLeft + "s";
 
     timerInterval = setInterval(() => {
         timeLeft--;
+        document.getElementById('timer').innerText = "Time left: " + timeLeft + "s";
         
-        if(timeLeft <= 0){
+        if (timeLeft <= 0) {
             clearInterval(timerInterval);
-            timeLeft = 0;
             revealCorrectSpelling();
         }
-
-        document.getElementById('timer').innerText = "Time left: " + timeLeft + "s";
     }, 1000);
-    
 }
 
 function checkAnswer(){
