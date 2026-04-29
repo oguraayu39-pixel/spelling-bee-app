@@ -6,7 +6,7 @@ let isWaitingForNext = false;
 let currentScore = 0;
 let bestScore = localStorage.getItem('bestScore') || 0;
 let seenInSession = [];
-let allVoices =[];
+let allVoices = [];
 
 document.getElementById('bestScoreDisplay').innerText = bestScore;
 
@@ -120,7 +120,6 @@ function startQuiz() {
         const firstLetter = item.text[0];
         const inRange = firstLetter >= start && firstLetter <= end;
         const practiceMatch = practiceOnly ? item.needsPractice : true;
-
         return categoryMatch && inRange && practiceMatch;
     });
 
@@ -129,56 +128,52 @@ function startQuiz() {
         return;
     }
 
+    // 3. Handle Session Tracking (Don't repeat words too soon)
     let availableWords = filteredWords.filter(w => !seenInSession.includes(w.text));
     if (availableWords.length === 0) {
-        seenInSession = [];
+        seenInSession = []; // Reset if we've gone through everything
         availableWords = filteredWords;
-        console.log("Session reset: All words available again.");
     }
 
-    // 3. Create the Smart Priority Pool
+    // 4. Create the Smart Priority Pool
     let priorityPool = [];
-    filteredWords.forEach(word => {
+    availableWords.forEach(word => {
         if (word.correctCount === 0 && word.incorrectCount === 0) {
-            priorityPool.push(word, word); // New words: double chance
+            priorityPool.push(word, word);
         } else if (word.incorrectCount > word.correctCount) {
-            priorityPool.push(word, word, word); // Struggled words: triple chance
+            priorityPool.push(word, word, word);
         } else {
-            priorityPool.push(word); // Mastered: single chance
+            priorityPool.push(word);
         }
     });
 
-    // 4. Pick the Word
+    // 5. Pick the Word
     let randomIndex = Math.floor(Math.random() * priorityPool.length);
     let selectedWordObject = priorityPool[randomIndex];
     seenInSession.push(selectedWordObject.text);
 
-    
     currentWordIndex = wordDatabase.findIndex(w => w.text === selectedWordObject.text);
-    
     let wordToSpell = wordDatabase[currentWordIndex].text;
 
-    let utterance = new SpeechSynthesisUtterance(wordToSpell);
+    // 6. Speech Synthesis (CLEAN VERSION)
+    const currentUtterance = new SpeechSynthesisUtterance(wordToSpell); // Renamed to avoid conflicts
     const voiceIndex = document.getElementById('voiceSelect').value;
     
-    if (voiceIndex !== "") {
-        utterance.voice = allVoices[voiceIndex];
+    if (voiceIndex !== "" && allVoices[voiceIndex]) {
+        currentUtterance.voice = allVoices[voiceIndex];
     } else {
-        utterance.lang = 'en-US';
+        currentUtterance.lang = 'en-US';
     }
     
-    utterance.rate = 0.9; 
-    window.speechSynthesis.speak(utterance);
+    currentUtterance.rate = 0.9; 
 
-    // 5. UI Setup
+    // 7. UI Setup & Timer
     document.getElementById('quiz-controls').style.display = 'block';
     document.getElementById('feedback').innerText = "";
-    
-    // 6. Timer and Speech
     if (timerInterval) clearInterval(timerInterval);
     
-    window.speechSynthesis.speak(utterance);
-    
+    // Only speak ONCE
+    window.speechSynthesis.speak(currentUtterance);
     startTimer();
 }
 
@@ -335,15 +330,18 @@ function resetGame(){
 function loadVoices() {
     allVoices = window.speechSynthesis.getVoices();
     const select = document.getElementById('voiceSelect');
-    
-    select.innerHTML = '<option value="">Default System Voice</option>';
+    if (!voiceSelect) return;
+    const currentSelected = voiceSelect.value;
+    voiceSelect.innerHTML = '<option value="">Default System Voice</option>';
 
     allVoices.forEach((voice, index) => {
         const option = document.createElement('option');
         option.value = index;
         option.textContent = `${voice.name} (${voice.lang})`;
-        select.appendChild(option);
+        voiceSelect.appendChild(option);
     });
+    
+    voiceSelect.value = currentSelected;
 }
 window.speechSynthesis.onvoiceschanged = loadVoices;
 loadVoices();
