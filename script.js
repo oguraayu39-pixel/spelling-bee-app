@@ -288,6 +288,7 @@ function listenAgain() {
         let utterance = new SpeechSynthesisUtterance(wordToSpell);
         window.speechSynthesis.speak(utterance);
     }
+    document.getElementById('answerInput').focus();
 }
 
 function resetGame(){
