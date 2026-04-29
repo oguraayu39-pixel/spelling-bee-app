@@ -177,7 +177,6 @@ function startQuiz() {
     // 6. Timer and Speech
     if (timerInterval) clearInterval(timerInterval);
     
-    let utterance = new SpeechSynthesisUtterance(wordToSpell);
     window.speechSynthesis.speak(utterance);
     
     startTimer();
