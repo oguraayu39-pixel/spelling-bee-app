@@ -5,6 +5,7 @@ let wordDatabase = JSON.parse(localStorage.getItem('myWords')) || [];
 let isWaitingForNext = false;
 let currentScore = 0;
 let bestScore = localStorage.getItem('bestScore') || 0;
+let seenInSession = [];
 
 document.getElementById('bestScoreDisplay').innerText = bestScore;
 
@@ -127,6 +128,13 @@ function startQuiz() {
         return;
     }
 
+    let availableWords = filteredWords.filter(w => !seenInSession.includes(w.text));
+    if (availableWords.length === 0) {
+        seenInSession = [];
+        availableWords = filteredWords;
+        console.log("Session reset: All words available again.");
+    }
+
     // 3. Create the Smart Priority Pool
     let priorityPool = [];
     filteredWords.forEach(word => {
@@ -142,6 +150,9 @@ function startQuiz() {
     // 4. Pick the Word
     let randomIndex = Math.floor(Math.random() * priorityPool.length);
     let selectedWordObject = priorityPool[randomIndex];
+    seenInSession.push(selectedWordObject.text);
+
+    
     currentWordIndex = wordDatabase.findIndex(w => w.text === selectedWordObject.text);
     
     let wordToSpell = wordDatabase[currentWordIndex].text;
