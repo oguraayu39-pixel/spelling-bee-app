@@ -125,6 +125,15 @@ function startQuiz(){
         return categoryMatch && inRange;
     });
 
+    let priorityPool = [];
+    filteredWords.forEach(word => {
+        if (word.correctCount === 0 && word.incorrectCount ===0){
+            priorityPool.push(word, word);
+        }else if(word.correctCount < word.incorrectCount){
+            priority
+        }
+    }
+
     if (filteredWords.length === 0) {
         alert("No words found for the selected categories/range!");
         return;
@@ -162,7 +171,7 @@ function startQuiz(){
 }
 
 function startTimer(){
-    timeLeft = 15;
+    timeLeft = parseInt(document.getElementById('timerSetting').value) || 10;
     document.getElementById('timer').innerText = "Time left: " + timeLeft + "s";
 
     timerInterval = setInterval(() => {
