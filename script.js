@@ -95,8 +95,12 @@ function saveWord() {
 function startQuiz(){
     isWaitingForNext = false;
     document.getElementById('nextButton').style.display = "none";
-    document.getElementById('answerInput').disabled = false; // Re-enable typing
-    document.getElementById('answerInput').focus(); // Put cursor in box
+
+    const inputField = document.getElementById('answerInput');
+    inputField.disabled = false; // Just in case
+    inputField.readOnly = false; // This is the important one!
+    inputField.value = "";
+    inputField.focus();
 
     window.speechSynthesis.cancel();
 
@@ -204,7 +208,7 @@ function checkAnswer(){
     updateStatsTable();
     document.getElementById('answerInput').value = ""; // Clears the box for the next word
     document.getElementById('nextButton').style.display = "inline-block";
-    document.getElementById('answerInput').disabled = true;
+    document.getElementById('answerInput').readOnly = true;
     isWaitingForNext = true; 
     document.getElementById('nextButton').focus(); // Move the "focus" to the next button
 }
@@ -219,7 +223,7 @@ function revealCorrectSpelling(){
     document.getElementById('nextButton').style.display = "inline-block";
     isWaitingForNext = true; 
     document.getElementById('nextButton').focus();
-    document.getElementById('answerInput').disabled = true;
+    document.getElementById('answerInput').readOnly = true;
 }
 
 function markForPractice() {
