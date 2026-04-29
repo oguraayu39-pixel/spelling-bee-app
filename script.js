@@ -265,25 +265,30 @@ function markForPractice() {
 
 function updateStatsTable() {
     const tbody = document.getElementById('statsBody');
-    
-    // 1. Clear the table first so we don't get duplicates
+    const sortType = document.getElementById('sortSelect').value;
     tbody.innerHTML = "";
 
-    // 2. Loop through every word in your database
-    wordDatabase.forEach(item => {
-        const row = document.createElement('tr');
+    let sortedList = [...wordDatabase];
 
-        // Create the cells (td)
-        const nameCell = `<td>${item.text}</td>`;
-        const categoryCell = `<td>${item.category || "General"}</td>`;
-        const correctCell = `<td>${item.correctCount}</td>`;
-        const incorrectCell = `<td>${item.incorrectCount}</td>`;
-        const practiceCell = `<td>${item.needsPractice ? "⭐ Yes" : "No"}</td>`;
+    if (sortType === "alpha") {
+        sortedList.sort((a, b) => a.text.localeCompare(b.text));
+    } else if (sortType === "best") {
+        sortedList.sort((a, b) => b.correctCount - a.correctCount);
+    } else if (sortType === "worst") {
+        sortedList.sort((a, b) => b.incorrectCount - a.incorrectCount);
+    }
 
-        // Put the cells into the row
-        row.innerHTML = nameCell + categoryCell + correctCell + incorrectCell + practiceCell;
+    sortedList.forEach((item) => {
+        const originalIndex = wordDatabase.findIndex(w => w.text === item.text);
         
-        // Add the row to the table
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${item.text}</td>
+            <td>${item.category || "General"}</td>
+            <td>${item.correctCount}</td>
+            <td>${item.incorrectCount}</td>
+            <td>${item.needsPractice ? "⭐ Yes" : "No"}</td>
+        `;
         tbody.appendChild(row);
     });
 } 
