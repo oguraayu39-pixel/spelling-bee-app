@@ -6,6 +6,7 @@ let isWaitingForNext = false;
 let currentScore = 0;
 let bestScore = localStorage.getItem('bestScore') || 0;
 let seenInSession = [];
+let allVoices =[];
 
 document.getElementById('bestScoreDisplay').innerText = bestScore;
 
@@ -157,6 +158,18 @@ function startQuiz() {
     
     let wordToSpell = wordDatabase[currentWordIndex].text;
 
+    let utterance = new SpeechSynthesisUtterance(wordToSpell);
+    const voiceIndex = document.getElementById('voiceSelect').value;
+    
+    if (voiceIndex !== "") {
+        utterance.voice = allVoices[voiceIndex];
+    } else {
+        utterance.lang = 'en-US';
+    }
+    
+    utterance.rate = 0.9; 
+    window.speechSynthesis.speak(utterance);
+
     // 5. UI Setup
     document.getElementById('quiz-controls').style.display = 'block';
     document.getElementById('feedback').innerText = "";
@@ -300,6 +313,16 @@ function listenAgain() {
         window.speechSynthesis.cancel();
         let wordToSpell = wordDatabase[currentWordIndex].text;
         let utterance = new SpeechSynthesisUtterance(wordToSpell);
+
+        const voiceIndex = document.getElementById('voiceSelect').value;
+        
+        if (voiceIndex !== "") {
+            utterance.voice = allVoices[voiceIndex];
+        } else {
+            utterance.lang = 'en-US';
+        }
+
+        utterance.rate = 0.9;
         window.speechSynthesis.speak(utterance);
     }
 }
@@ -309,6 +332,22 @@ function resetGame(){
     document.getElementById('scoreDisplay').innerText = "0";
     startQuiz();
 }
+
+function loadVoices() {
+    allVoices = window.speechSynthesis.getVoices();
+    const select = document.getElementById('voiceSelect');
+    
+    select.innerHTML = '<option value="">Default System Voice</option>';
+
+    allVoices.forEach((voice, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = `${voice.name} (${voice.lang})`;
+        select.appendChild(option);
+    });
+}
+window.speechSynthesis.onvoiceschanged = loadVoices;
+loadVoices();
 
 updateStatsTable();
     
