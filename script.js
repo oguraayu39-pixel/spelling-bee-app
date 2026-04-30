@@ -334,7 +334,7 @@ function updateStatsTable() {
 function handleEnter(event) {
     window.addEventListener('keydown', function(event) {
         if (event.key === "Enter") {
-            if(document.getElementById('quiz-controls').style !=== 'none'){
+            if(document.getElementById('quiz-controls').style.display !== 'none'){
                 event.preventDefault(); 
                 if (isWaitingForNext === true) {
                     startQuiz();
@@ -344,7 +344,7 @@ function handleEnter(event) {
             }
         }
         if (event.key === "Tab") {
-            if(document.getElementById('quiz-controls').style !=== 'none'){
+            if(document.getElementById('quiz-controls').style.display !== 'none'){
                 event.preventDefault(); // Prevents a space character from appearing in the box
                 if (currentWordIndex !== -1) {
                     listenAgain();
