@@ -16,7 +16,7 @@ const TWO_BEE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9oD_VDTfs
 const urlParams = new URLSearchParams(window.location.search);
 const isAdmin = urlParams.get('admin') === 'true';
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
     const savedLinks = localStorage.getItem('syncLinks');
     const linksInput = document.getElementById('sheetLinks');
 
@@ -24,14 +24,15 @@ window.addEventListener('DOMContentLoaded', () => {
     
     if (savedLinks) {
         linksInput.value = savedLinks;
+        if (!wordDatabase || wordDatabase.length === 0) {
+            await syncAllData(); 
+        }
     } else {
-        // New user! Give them the defaults and sync automatically
         linksInput.value = masterLinks;
         localStorage.setItem('syncLinks', masterLinks);
         
-        // Auto-sync so the game is ready immediately
-        console.log("New user detected. Auto-syncing default words...");
-        syncAllData(); 
+        console.log("New user detected. Auto-syncing...");
+        await syncAllData(); 
     }
     updateStatsTable();
     loadVoices();
@@ -41,7 +42,6 @@ window.addEventListener('DOMContentLoaded', () => {
         document.getElementById('admin-section').style.display = 'block';
     } else {
         console.log("User mode. Sync button hidden.");
-        // Double-check it is hidden
         document.getElementById('admin-section').style.display = 'none';
     }
 });
@@ -49,33 +49,40 @@ window.addEventListener('DOMContentLoaded', () => {
 async function syncAllData() {
     const linksInput = document.getElementById('sheetLinks').value.trim();
     if (!linksInput) {
-        alert("Please paste at least one link!");
+        console.warn("No links found to sync.");
         return;
     }
-
+    
     const urls = linksInput.split('\n').map(url => url.trim()).filter(url => url !== "");
     wordDatabase = []; 
     
     localStorage.setItem('syncLinks', linksInput);
 
-    const syncBtn = event.target;
-    syncBtn.innerText = "⌛ Syncing...";
-    syncBtn.disabled = true;
+    const syncBtn = (typeof event !== 'undefined' && event && event.target) ? event.target : null;
+    
+    if (syncBtn && syncBtn.innerText) {
+        syncBtn.innerText = "⌛ Syncing...";
+        syncBtn.disabled = true;
+    }
 
     for (let url of urls) {
         try {
             await fetchSpecificSheet(url, "Synced List");
         } catch (e) {
-            console.error("Error fetching: " + url);
+            console.error("Error fetching: " + url, e);
         }
     }
 
     localStorage.setItem('myWords', JSON.stringify(wordDatabase));
+  
     updateStatsTable();
     
-    syncBtn.innerText = "Sync All Words";
-    syncBtn.disabled = false;
-    alert(`Sync Complete! Total words loaded: ${wordDatabase.length}`);
+    if (syncBtn && syncBtn.innerText) {
+        syncBtn.innerText = "Sync All Words";
+        syncBtn.disabled = false;
+        alert(`Sync Complete! Total words loaded: ${wordDatabase.length}`);
+    }
+    return true; 
 }
 
 async function fetchSpecificSheet(url) {
@@ -105,28 +112,21 @@ async function fetchSpecificSheet(url) {
     }
 }
 
-
-// 2. The function to save a word
 function saveWord() {
     const input = document.getElementById('wordInput');
     const newWord = input.value.trim().toLowerCase();
 
     if (newWord !== "") {
-        // Create a "Word Object" with stats
         const wordInfo = {
             text: newWord,
             correctCount: 0,
             incorrectCount: 0,
             needsPractice: false
         };
-
-        // Add it to our list
+        
         wordDatabase.push(wordInfo);
 
-        // Save it to the browser's memory (Local Storage)
         localStorage.setItem('myWords', JSON.stringify(wordDatabase));
-
-        // Clear the input box and alert the user
         input.value = "";
         alert("Word added! Total words: " + wordDatabase.length);
     }
