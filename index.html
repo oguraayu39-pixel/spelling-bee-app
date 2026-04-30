@@ -8,16 +8,12 @@
 
     <h1>🐝 Spelling Bee Trainer</h1>
 
-    <div id="admin-section" style="display: none;">
-        <button onclick="syncAllData()">Update Database from Google Sheets</button>
-    </div>
-
-    <hr>
-
-    <div id="bee-selection">
-        <input type="checkbox" id="oneBeeCheck" checked> <label>One Bee</label>
-        <input type="checkbox" id="twoBeeCheck"> <label>Two Bee</label>
-        <button onclick="syncAllData()">Sync All Word Lists</button>
+    <div id="admin-section" style="display:none; border: 2px solid #444; padding: 15px; margin-top: 20px;">
+        <h3>Admin Data Sync</h3>
+        <p>Paste your Google Sheet CSV links below (one per line):</p>
+        <textarea id="sheetLinks" rows="5" style="width: 100%; font-size: 12px;" placeholder="https://docs.google.com/.../pub?output=csv"></textarea>
+        <br><br>
+        <button onclick="syncAllData()" style="background-color: #28a745; color: white; padding: 10px;">Sync All Words</button>
     </div>
 
     <hr>
