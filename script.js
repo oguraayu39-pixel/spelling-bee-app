@@ -78,7 +78,7 @@ async function syncAllData() {
     alert(`Sync Complete! Total words loaded: ${wordDatabase.length}`);
 }
 
-async function fetchSpecificSheet(url, categoryName) {
+async function fetchSpecificSheet(url) {
     try {
         const response = await fetch(url);
         if (!response.ok) throw new Error("Network error");
@@ -94,7 +94,6 @@ async function fetchSpecificSheet(url, categoryName) {
             if (wordText) {
                 wordDatabase.push({
                     text: wordText,
-                    category: categoryName, // This is crucial for your checkboxes!
                     correctCount: 0,
                     incorrectCount: 0,
                     needsPractice: false
@@ -102,7 +101,7 @@ async function fetchSpecificSheet(url, categoryName) {
             }
         }
     } catch (error) {
-        console.error(`Failed to load ${categoryName}:`, error);
+        console.error(`Failed to load the wordlist.:`, error);
     }
 }
 
@@ -324,7 +323,6 @@ function updateStatsTable() {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${item.text}</td>
-            <td>${item.category || "General"}</td>
             <td>${item.correctCount}</td>
             <td>${item.incorrectCount}</td>
             <td>${item.needsPractice ? "⭐ Yes" : "No"}</td>
@@ -393,7 +391,7 @@ function loadVoices() {
     const currentSelected = voiceSelect.value;
     voiceSelect.innerHTML = '<option value="">Default System Voice</option>';
 
-    const trustedCreators = ['Google', 'Apple', 'Microsoft'];
+    const trustedCreators = ['Google', 'Apple', 'Alex', 'Samantha', 'Microsoft'];
 
     const filteredVoices = allVoices.filter(voice => {
         const isTrusted = trustedCreators.some(creator => voice.name.includes(creator));
