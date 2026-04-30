@@ -18,9 +18,24 @@ const isAdmin = urlParams.get('admin') === 'true';
 
 window.addEventListener('DOMContentLoaded', () => {
     const savedLinks = localStorage.getItem('syncLinks');
+    const linksInput = document.getElementById('sheetLinks');
+
+    const masterLinks = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9oD_VDTfsKrdcbde04-GR6meNneDIr2P61j9cC2AGDV_TL_kN8ARNYCx3LbwJUQwD5FmydjWMgMTI/pub?gid=0&single=true&output=csv" + "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9oD_VDTfsKrdcbde04-GR6meNneDIr2P61j9cC2AGDV_TL_kN8ARNYCx3LbwJUQwD5FmydjWMgMTI/pub?gid=1465023831&single=true&output=csv";
+    
     if (savedLinks) {
-        document.getElementById('sheetLinks').value = savedLinks;
+        linksInput.value = savedLinks;
+    } else {
+        // New user! Give them the defaults and sync automatically
+        linksInput.value = masterLinks;
+        localStorage.setItem('syncLinks', masterLinks);
+        
+        // Auto-sync so the game is ready immediately
+        console.log("New user detected. Auto-syncing default words...");
+        syncAllData(); 
     }
+    updateStatsTable();
+    loadVoices();
+    
     if (isAdmin) {
         console.log("Admin mode active. Showing sync button.");
         document.getElementById('admin-section').style.display = 'block';
@@ -119,6 +134,10 @@ function saveWord() {
 }
 
 function startQuiz() {
+    if (wordDatabase.length === 0) {
+        alert("Words are still loading or the database is empty. Please wait a moment or click Sync in Admin.");
+        return;
+    }
     isWaitingForNext = false;
     document.getElementById('nextButton').style.display = "none";
     document.getElementById('submitButton').style.display = "inline-block";
@@ -392,7 +411,4 @@ function loadVoices() {
     voiceSelect.value = currentSelected;
 }
 window.speechSynthesis.onvoiceschanged = loadVoices;
-loadVoices();
-
-updateStatsTable();
     
