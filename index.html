@@ -42,13 +42,29 @@
             <label for="practiceOnlyCheckbox">Quiz only from "Practice More" list</label>
         </div>
         <button onclick="startQuiz()">Start</button>
-        <p id="timer">Time left: 15s</p>
+        <!-- <p id="timer">Time left: 15s</p> -->
         <div id="quiz-controls" style="display:none;">
-            <input type="text" id="answerInput" placeholder="Spell it!" onkeydown="handleEnter(event)">
-            <button id="submitButton" onclick="checkAnswer()">Submit</button>
-            <button onclick="listenAgain()">🔊 Listen Again</button>
-            <button onclick="markForPractice()">⭐ Practice This More</button>
-            <button id="nextButton" onclick="startQuiz()" style="display:none;">Next Word →</button>
+            <div class="main-quiz-card">
+                <h2 id="timer">10s</h2>
+                <div class="input-container">
+                    <input type="text" id="answerInput" placeholder="Type here..." autocomplete="off">
+                </div>
+                
+                <div id="feedback"></div>
+
+                <div class="button-group">
+                    <button id="submitButton" onclick="checkAnswer()">Submit (Enter)</button>
+                    <button id="nextButton" onclick="startQuiz()" style="display:none;">Next Word (Enter)</button>
+                    <button id="listenButton" onclick="replayAudio()">🔊 Listen Again (Tab)</button>
+                    <button id="practiceMoreButton" onclick="markForPractice()">⭐ Practice This More</button>
+                </div>
+            </div>
+
+            <div class="shortcut-legend">
+                <span><strong>↲ Enter</strong> Submit / Next</span>
+                <span><strong>⇥ Tab</strong> Replay Audio</span>
+                <span><strong>↑ / ↓</strong> Change Volume</span>
+            </div>
         </div>
         <p id="feedback"></p>
     </div>
