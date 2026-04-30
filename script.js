@@ -17,6 +17,10 @@ const urlParams = new URLSearchParams(window.location.search);
 const isAdmin = urlParams.get('admin') === 'true';
 
 window.addEventListener('DOMContentLoaded', () => {
+    const savedLinks = localStorage.getItem('syncLinks');
+    if (savedLinks) {
+        document.getElementById('sheetLinks').value = savedLinks;
+    }
     if (isAdmin) {
         console.log("Admin mode active. Showing sync button.");
         document.getElementById('admin-section').style.display = 'block';
@@ -28,14 +32,34 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 async function syncAllData() {
-    wordDatabase = []; // Start fresh
+    const linksInput = document.getElementById('sheetLinks').value.trim();
+    if (!linksInput) {
+        alert("Please paste at least one link!");
+        return;
+    }
+
+    const urls = linksInput.split('\n').map(url => url.trim()).filter(url => url !== "");
+    wordDatabase = []; 
     
-    // Fetch both (or as many as you have)
-    await fetchSpecificSheet(ONE_BEE_URL, "One Bee");
-    await fetchSpecificSheet(TWO_BEE_URL, "Two Bee");
-    
+    localStorage.setItem('syncLinks', linksInput);
+
+    const syncBtn = event.target;
+    syncBtn.innerText = "⌛ Syncing...";
+    syncBtn.disabled = true;
+
+    for (let url of urls) {
+        try {
+            await fetchSpecificSheet(url, "Synced List");
+        } catch (e) {
+            console.error("Error fetching: " + url);
+        }
+    }
+
     localStorage.setItem('myWords', JSON.stringify(wordDatabase));
     updateStatsTable();
+    
+    syncBtn.innerText = "Sync All Words";
+    syncBtn.disabled = false;
     alert(`Sync Complete! Total words loaded: ${wordDatabase.length}`);
 }
 
@@ -116,12 +140,10 @@ function startQuiz() {
 
     // 2. Filter the Master Database
     let filteredWords = wordDatabase.filter(item => {
-        const categoryMatch = (showOneBee && item.category === "One Bee") || 
-                              (showTwoBee && item.category === "Two Bee");
         const firstLetter = item.text[0];
         const inRange = firstLetter >= start && firstLetter <= end;
         const practiceMatch = practiceOnly ? item.needsPractice : true;
-        return categoryMatch && inRange && practiceMatch;
+        return inRange && practiceMatch;
     });
 
     if (filteredWords.length === 0) {
