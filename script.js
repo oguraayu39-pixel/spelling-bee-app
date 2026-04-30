@@ -334,16 +334,17 @@ function updateStatsTable() {
 function handleEnter(event) {
     if (event.key === "Enter") {
         event.preventDefault(); 
-        console.log("Enter pressed. isWaitingForNext is:", isWaitingForNext);
         if (isWaitingForNext === true) {
             startQuiz();
         } else {
             checkAnswer();
         }
     }
-    if (event.code === "Tab") {
+    if (event.key === "Tab") {
         event.preventDefault(); // Prevents a space character from appearing in the box
-        listenAgain();
+        if (currentWordIndex !== -1) {
+            listenAgain();
+        }
         document.getElementById('answerInput').focus();
     }
 }
