@@ -332,21 +332,27 @@ function updateStatsTable() {
 } 
 
 function handleEnter(event) {
-    if (event.key === "Enter") {
-        event.preventDefault(); 
-        if (isWaitingForNext === true) {
-            startQuiz();
-        } else {
-            checkAnswer();
+    window.addEventListener('keydown', function(event) {
+        if (event.key === "Enter") {
+            if(document.getElementById('quiz-controls').style !=== 'none'){
+                event.preventDefault(); 
+                if (isWaitingForNext === true) {
+                    startQuiz();
+                } else {
+                    checkAnswer();
+                }
+            }
         }
-    }
-    if (event.key === "Tab") {
-        event.preventDefault(); // Prevents a space character from appearing in the box
-        if (currentWordIndex !== -1) {
-            listenAgain();
+        if (event.key === "Tab") {
+            if(document.getElementById('quiz-controls').style !=== 'none'){
+                event.preventDefault(); // Prevents a space character from appearing in the box
+                if (currentWordIndex !== -1) {
+                    listenAgain();
+                }
+                document.getElementById('answerInput').focus();
+            }
         }
-        document.getElementById('answerInput').focus();
-    }
+    });
 }
 
 function toggleStats() {
