@@ -132,8 +132,7 @@ function startQuiz() {
     window.speechSynthesis.cancel();
 
     // 1. Get Filters
-    const showOneBee = document.getElementById('oneBeeCheck').checked;
-    const showTwoBee = document.getElementById('twoBeeCheck').checked;
+    
     const practiceOnly = document.getElementById('practiceOnlyCheckbox').checked;
     const start = document.getElementById('startLetter').value.toLowerCase() || 'a';
     const end = document.getElementById('endLetter').value.toLowerCase() || 'z';
@@ -147,7 +146,7 @@ function startQuiz() {
     });
 
     if (filteredWords.length === 0) {
-        alert("No words found for the selected settings!");
+        alert("No words found.");
         return;
     }
 
