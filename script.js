@@ -346,9 +346,7 @@ function handleEnter(event) {
         if (event.key === "Tab") {
             if(document.getElementById('quiz-controls').style.display !== 'none'){
                 event.preventDefault(); // Prevents a space character from appearing in the box
-                if (currentWordIndex !== -1) {
-                    listenAgain();
-                }
+                listenAgain();
                 document.getElementById('answerInput').focus();
             }
         }
