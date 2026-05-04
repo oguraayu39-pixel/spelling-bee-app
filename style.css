@@ -50,7 +50,9 @@ h1 {
 
 #answerInput:focus {
     border-color: #FFD700;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
     background-color: #fffdec;
+    outline: none;
 }
 
 /* --- Feedback & Results --- */
