@@ -154,6 +154,7 @@ function startQuiz() {
     const practiceOnly = document.getElementById('practiceOnlyCheckbox').checked;
     const start = document.getElementById('startLetter').value.toLowerCase() || 'a';
     const end = document.getElementById('endLetter').value.toLowerCase() || 'z';
+    
 
     // 2. Filter the Master Database
     let filteredWords = wordDatabase.filter(item => {
@@ -205,7 +206,7 @@ function startQuiz() {
         currentUtterance.lang = 'en-US';
     }
     
-    currentUtterance.rate = 0.9; 
+    currentUtterance.rate = 0.75; 
 
     // 7. UI Setup & Timer
     document.getElementById('quiz-controls').style.display = 'block';
@@ -218,15 +219,20 @@ function startQuiz() {
 }
 
 function startTimer() {
-    // Grabs the number from your HTML input, default to 10
-    const userTime = document.getElementById('timerSetting');
-    timeLeft = userTime ? parseInt(userTime.value) : 10;
+    const timerSettingInput = document.getElementById('timerSetting');
+    timeLeft = timerSettingInput ? parseInt(timerSettingInput.value) : 10;
     
-    document.getElementById('timer').innerText = "Time left: " + timeLeft + "s";
+    const display = document.getElementById('timerDisplay'); // Use the correct ID!
+    if (display) {
+        display.innerText = timeLeft + "s";
+    }
 
     timerInterval = setInterval(() => {
         timeLeft--;
-        document.getElementById('timer').innerText = "Time left: " + timeLeft + "s";
+        
+        if (display) {
+            display.innerText = timeLeft + "s";
+        }
         
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
@@ -376,7 +382,7 @@ function listenAgain() {
             utterance.lang = 'en-US';
         }
 
-        utterance.rate = 0.9;
+        utterance.rate = 0.75;
         window.speechSynthesis.speak(utterance);
     }
 }
