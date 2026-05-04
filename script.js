@@ -20,7 +20,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     const savedLinks = localStorage.getItem('syncLinks');
     const linksInput = document.getElementById('sheetLinks');
 
-    const masterLinks = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9oD_VDTfsKrdcbde04-GR6meNneDIr2P61j9cC2AGDV_TL_kN8ARNYCx3LbwJUQwD5FmydjWMgMTI/pub?gid=0&single=true&output=csv" + "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9oD_VDTfsKrdcbde04-GR6meNneDIr2P61j9cC2AGDV_TL_kN8ARNYCx3LbwJUQwD5FmydjWMgMTI/pub?gid=1465023831&single=true&output=csv";
+    // FIX: Added '\n' so the links don't mush together
+    const masterLinks = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9oD_VDTfsKrdcbde04-GR6meNneDIr2P61j9cC2AGDV_TL_kN8ARNYCx3LbwJUQwD5FmydjWMgMTI/pub?gid=0&single=true&output=csv" + "\n" + 
+                        "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9oD_VDTfsKrdcbde04-GR6meNneDIr2P61j9cC2AGDV_TL_kN8ARNYCx3LbwJUQwD5FmydjWMgMTI/pub?gid=1465023831&single=true&output=csv";
     
     if (savedLinks) {
         linksInput.value = savedLinks;
@@ -30,21 +32,18 @@ window.addEventListener('DOMContentLoaded', async () => {
     } else {
         linksInput.value = masterLinks;
         localStorage.setItem('syncLinks', masterLinks);
-        
         console.log("New user detected. Auto-syncing...");
         await syncAllData(); 
     }
+    
     updateStatsTable();
     loadVoices();
     
     if (isAdmin) {
-        console.log("Admin mode active. Showing sync button.");
         document.getElementById('admin-section').style.display = 'block';
-    } else {
-        console.log("User mode. Sync button hidden.");
-        document.getElementById('admin-section').style.display = 'none';
     }
 });
+
 
 async function syncAllData() {
     const linksInput = document.getElementById('sheetLinks').value.trim();
@@ -85,7 +84,8 @@ async function syncAllData() {
     return true; 
 }
 
-async function fetchSpecificSheet(url) {
+
+async function fetchSpecificSheet(url, category) {
     try {
         const response = await fetch(url);
         if (!response.ok) throw new Error("Network error");
@@ -93,7 +93,6 @@ async function fetchSpecificSheet(url) {
         const data = await response.text();
         const rows = data.split("\n");
 
-        // Skip header row (i = 1)
         for (let i = 1; i < rows.length; i++) {
             const columns = rows[i].split(",");
             const wordText = columns[0] ? columns[0].trim().toLowerCase() : "";
@@ -101,6 +100,7 @@ async function fetchSpecificSheet(url) {
             if (wordText) {
                 wordDatabase.push({
                     text: wordText,
+                    category: category, // Now this works
                     correctCount: 0,
                     incorrectCount: 0,
                     needsPractice: false
@@ -331,27 +331,26 @@ function updateStatsTable() {
     });
 } 
 
-function handleEnter(event) {
-    window.addEventListener('keydown', function(event) {
-        if (event.key === "Enter") {
-            if(document.getElementById('quiz-controls').style.display !== 'none'){
-                event.preventDefault(); 
-                if (isWaitingForNext === true) {
-                    startQuiz();
-                } else {
-                    checkAnswer();
-                }
+
+window.addEventListener('keydown', function(event) {
+    if (event.key === "Enter") {
+        if(document.getElementById('quiz-controls').style.display !== 'none'){
+            event.preventDefault(); 
+            if (isWaitingForNext === true) {
+                startQuiz();
+            } else {
+                checkAnswer();
             }
         }
-        if (event.key === "Tab") {
-            if(document.getElementById('quiz-controls').style.display !== 'none'){
-                event.preventDefault(); // Prevents a space character from appearing in the box
-                listenAgain();
-                document.getElementById('answerInput').focus();
-            }
+    }
+    if (event.key === "Tab") {
+        if(document.getElementById('quiz-controls').style.display !== 'none'){
+            event.preventDefault(); 
+            listenAgain();
+            document.getElementById('answerInput').focus();
         }
-    });
-}
+    }
+});
 
 function toggleStats() {
     const wrapper = document.getElementById('stats-wrapper');
