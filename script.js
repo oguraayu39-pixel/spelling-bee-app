@@ -206,7 +206,7 @@ function startQuiz() {
         currentUtterance.lang = 'en-US';
     }
     
-    currentUtterance.rate = 0.6; 
+    currentUtterance.rate = 0.7; 
 
     // 7. UI Setup & Timer
     document.getElementById('quiz-controls').style.display = 'block';
@@ -382,7 +382,7 @@ function listenAgain() {
             utterance.lang = 'en-US';
         }
 
-        utterance.rate = 0.6;
+        utterance.rate = 0.7;
         window.speechSynthesis.speak(utterance);
     }
 }
